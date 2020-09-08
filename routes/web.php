@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +17,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', 'RestaurantsController@index');
+    Route::resource('menus', 'MenusController');
+    Route::resource('restaurants', 'RestaurantsController');
+    Route::get('restaurants/{id}/travel', 'RestaurantsController@travel')->name('restaurants.travel');
+});
 
-Auth::routes();
+
+
+Auth::routes(['register' => false]);
 
 Route::get('/home', 'HomeController@index')->name('home');

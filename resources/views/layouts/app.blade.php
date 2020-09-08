@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -33,7 +34,14 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        @auth
+                        <li class="nav-item">
+                            <a href="{{ route('menus.index') }}" class="nav-link">Meniu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('restaurants.index') }}" class="nav-link">Restoranai</a>
+                        </li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -73,8 +81,15 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            <div class="container">
+                @yield('content')
+            </div>
         </main>
     </div>
+    <script>
+        tinymce.init({
+          selector: '#mce'
+        });
+      </script>
 </body>
 </html>

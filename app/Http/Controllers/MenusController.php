@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\menus;
+use App\Menus;
 use Illuminate\Http\Request;
 
 class MenusController extends Controller
@@ -14,7 +14,7 @@ class MenusController extends Controller
      */
     public function index()
     {
-        //
+        return view('menuses.index', ['menus' => Menus::orderBy('price')->get()]);
     }
 
     /**
@@ -24,7 +24,7 @@ class MenusController extends Controller
      */
     public function create()
     {
-        //
+        return view('menuses.create');
     }
 
     /**
@@ -35,16 +35,21 @@ class MenusController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $menu = new Menus();
+        // can be used for seeing the insides of the incoming request
+        // var_dump($request->all()); die();
+        $menu->fill($request->all());
+        $menu->save();
+        return redirect()->route('menus.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\menus  $menus
+     * @param  \App\Menus  $menu
      * @return \Illuminate\Http\Response
      */
-    public function show(menus $menus)
+    public function show(Menus $menu)
     {
         //
     }
@@ -52,34 +57,37 @@ class MenusController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\menus  $menus
+     * @param  \App\Menus  $menu
      * @return \Illuminate\Http\Response
      */
-    public function edit(menus $menus)
+    public function edit(Menus $menu)
     {
-        //
+        return view('menuses.edit', ['menu' => $menu]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\menus  $menus
+     * @param  \App\Menus  $menu
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, menus $menus)
+    public function update(Request $request, Menus $menu)
     {
-        //
+        $menu->fill($request->all());
+        $menu->save();
+        return redirect()->route('menus.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\menus  $menus
+     * @param  \App\Menus  $menu
      * @return \Illuminate\Http\Response
      */
-    public function destroy(menus $menus)
+    public function destroy(Menus $menu, Request $request)
     {
-        //
+        $menu->delete();
+        return redirect()->route('restaurants.index', ['menu_id' => $request->input('menu_id')]);
     }
 }

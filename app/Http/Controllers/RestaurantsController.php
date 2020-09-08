@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\restaurants;
+use App\Restaurants;
 use Illuminate\Http\Request;
 
 class RestaurantsController extends Controller
@@ -12,74 +12,53 @@ class RestaurantsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if (isset($request->menu_id) && $request->menu_id !== 0)
+            $restaurants = \App\Restaurants::where('menu_id', $request->menu_id)->orderBy('title')->get();
+        else
+            $restaurants = \App\Restaurants::orderBy('title')->get();
+        $menus = \App\Menus::orderBy('title')->get();
+        return view('restaurants.index', ['restaurants' => $restaurants, 'menus' => $menus]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        $menus = \App\Menus::orderBy('title')->get();
+        return view('restaurants.create', ['menus' => $menus]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $restaurant = new Restaurants();
+        // can be used for seeing the insides of the incoming request
+        // var_dump($request->all()); die();
+        $restaurant->fill($request->all());
+        $restaurant->save();
+        return redirect()->route('restaurants.index');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\restaurants  $restaurants
-     * @return \Illuminate\Http\Response
-     */
-    public function show(restaurants $restaurants)
+    public function show(Restaurants $restaurant)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\restaurants  $restaurants
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(restaurants $restaurants)
+    public function edit(Restaurants $restaurant)
     {
-        //
+        $menus = \App\Menus::orderBy('price')->get();
+        return view('restaurants.edit', ['restaurant' => $restaurant, 'menus' => $menus]);
+    }
+    public function update(Request $request, Restaurants $restaurant)
+    {
+        $restaurant->fill($request->all());
+        $restaurant->save();
+        return redirect()->route('restaurants.index');
+    }
+    public function destroy(Restaurants $restaurant, Request $request)
+    {
+        $restaurant->delete();
+        return redirect()->route('restaurants.index', ['menu_id' => $request->input('menu_id')]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\restaurants  $restaurants
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, restaurants $restaurants)
+    public function travel($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\restaurants  $restaurants
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(restaurants $restaurants)
-    {
-        //
+        $restaurant = Restaurants::find($id);
+        return view('restaurants.travel', ['restaurant' => $restaurant]);
     }
 }
